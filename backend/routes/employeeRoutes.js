@@ -3,7 +3,6 @@ const router = express.Router();
 const Task = require('../models/Task');
 const Feedback = require('../models/Feedback');
 
-// 📌 Get all tasks for an employee
 router.get('/tasks', async (req, res) => {
     try {
         const tasks = await Task.find();
@@ -13,7 +12,6 @@ router.get('/tasks', async (req, res) => {
     }
 });
 
-// 📌 Get a specific task by ID
 router.get('/tasks/:id', async (req, res) => {
     try {
         const task = await Task.findById(req.params.id);
@@ -23,8 +21,7 @@ router.get('/tasks/:id', async (req, res) => {
         res.status(500).json({ message: error.message });
     }
 });
-
-// 📌 Submit feedback for a task
+k
 router.post('/feedback', async (req, res) => {
     try {
         const { taskId, from, to, formData } = req.body;
