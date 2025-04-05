@@ -1,9 +1,15 @@
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import Auth from './pages/Auth';
 
 function App() {
+
   return (
-    <div className="App">
-      <h1>Welcome to the App</h1>
-    </div>
+    <BrowserRouter>
+      <Routes>
+        <Route path="/auth" element={<Auth />} />
+      </Routes>
+    </BrowserRouter>
   );
 }
+
 export default App;
