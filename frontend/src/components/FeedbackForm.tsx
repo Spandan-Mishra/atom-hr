@@ -116,13 +116,13 @@ interface Task {
 }
 
 interface FeedbackFormProps {
-  type: 'hr' | 'em';
+  type: 'HR' | 'Employee';
   onSubmit: (data: unknown) => void;
   userId: string;
 }
 
 export default function FeedbackForm({ type, onSubmit, userId }: FeedbackFormProps) {
-  const questions = type === 'hr' ? hrQuestions : employeeQuestions;
+  const questions = type === 'HR' ? hrQuestions : employeeQuestions;
   const [answers, setAnswers] = useState<Record<number, string[] | string | number>>({});
   const [overallRating, setOverallRating] = useState<number>(0);
   const [hoveredStar, setHoveredStar] = useState<number | null>(null);
@@ -144,7 +144,7 @@ export default function FeedbackForm({ type, onSubmit, userId }: FeedbackFormPro
   const fetchTasks = async () => {
     try {
       // Use the appropriate endpoint based on user role
-      const endpoint = type === 'hr' ? '/managers/tasks' : '/employees/tasks';
+      const endpoint = type === 'HR' ? '/managers/tasks' : '/employees/tasks';
       const response = await axios.get(endpoint);
       if(Array.isArray(response.data)) {
         setTasks(response.data);
@@ -160,7 +160,7 @@ export default function FeedbackForm({ type, onSubmit, userId }: FeedbackFormPro
   const fetchEmployees = async () => {
     try {
       // Use the appropriate endpoint based on user role
-      const endpoint = type === 'hr' ? '/managers/employees' : '/employees';
+      const endpoint = type === 'HR' ? '/managers/employees' : '/employees';
       const response = await axios.get(endpoint);
       // Filter out current user from the list
       const filteredEmployees = response.data

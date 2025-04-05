@@ -4,7 +4,6 @@ import { useNavigate } from 'react-router-dom';
 
 export default function Auth() {
   const [formData, setFormData] = useState({
-    id: '',
     companyName: '',
     phone: ''
   });
@@ -15,14 +14,12 @@ export default function Auth() {
     
     try {
       const res = await axios.post("http://localhost:3000/auth/login", formData);
-      if(formData.id.startsWith("HR")) {
-        localStorage.setItem('role', 'hr');
-      } else {
-        localStorage.setItem('role', 'em');
-      }
-      localStorage.setItem('id', formData.id);
+      localStorage.setItem("phone", formData.phone);
+      const response = await axios.get(`http://localhost:3000/users/${formData.phone}`);
+      const user = response.data.user;
+      localStorage.setItem("user", JSON.stringify(user));
       alert(res.data.message || "Success");
-      navigate('/');
+      navigate('/dashboard');
     } catch (err) {
       console.error(err);
       alert("Login failed");
@@ -46,20 +43,6 @@ export default function Auth() {
 
         <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
           <div className="space-y-4">
-            <div>
-              <label htmlFor="id" className="block text-sm font-medium text-gray-700">
-                Employee ID
-              </label>
-              <input
-                id="id"
-                name="id"
-                type="text"
-                required
-                value={formData.id}
-                onChange={handleChange}
-                className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#2E21DE] focus:border-[#2E21DE]"
-              />
-            </div>
             <div>
               <label htmlFor="companyName" className="block text-sm font-medium text-gray-700">
                 Company Name
