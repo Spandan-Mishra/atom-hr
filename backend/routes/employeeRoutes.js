@@ -45,10 +45,10 @@ router.post('/feedback', async (req, res) => {
     }
 });
 
-router.get('/feedbacks/received/:employeeId', async (req, res) => {
+router.get('/feedbacks/:employeeId', async (req, res) => {
     try {
         const feedbacks = await Feedback.find({ to: req.params.employeeId })
-            .populate('from', 'name email')
+            .populate('from', 'id')
             .populate('taskId', 'title');
 
         res.json(feedbacks);

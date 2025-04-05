@@ -15,6 +15,12 @@ export default function Auth() {
     
     try {
       const res = await axios.post("http://localhost:3000/auth/login", formData);
+      if(formData.id.startsWith("HR")) {
+        localStorage.setItem('role', 'hr');
+      } else {
+        localStorage.setItem('role', 'em');
+      }
+      localStorage.setItem('id', formData.id);
       alert(res.data.message || "Success");
       navigate('/');
     } catch (err) {
