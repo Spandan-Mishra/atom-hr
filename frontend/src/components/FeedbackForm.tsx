@@ -100,7 +100,6 @@ export default function FeedbackForm({ type, onSubmit }: FeedbackFormProps) {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     
-    // Validate all questions are answered
     const unansweredQuestions = questions.filter(q => !answers[q.id]);
     if (unansweredQuestions.length > 0 || !overallRating) {
       toast.error('Please answer all questions and provide an overall rating');
