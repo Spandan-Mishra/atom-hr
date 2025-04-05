@@ -1,74 +1,93 @@
-
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
   MessageSquare, 
   Search, 
   Star,
-  ThumbsUp,
   Calendar,
   X
 } from 'lucide-react';
 import FeedbackForm from '../components/FeedbackForm';
+import axios from 'axios';
 
 export default function Feedback() {
-  const [filter, setFilter] = useState('all');
+  const role = localStorage.getItem('role') as 'hr' | 'em' | null;
+  const userId = localStorage.getItem('userId');
+  const [filter, setFilter] = useState('received');
   const [showFeedbackForm, setShowFeedbackForm] = useState(false);
+  interface Feedback {
+    _id: string;
+    from?: { name?: string; avatar?: string };
+    to?: { name?: string; avatar?: string };
+    taskId?: { title?: string };
+    formData: {
+      overallRating: number;
+      answers: Record<string, string>;
+    };
+    createdAt: string;
+  }
 
-  const feedbacks = [
-    {
-      id: 1,
-      from: {
-        name: 'John Doe',
-        avatar: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80'
-      },
-      to: {
-        name: 'Jane Smith',
-        avatar: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80'
-      },
-      task: 'Frontend Development',
-      rating: 5,
-      content: 'Excellent work on the UI components. The attention to detail and clean code structure made the review process smooth. Keep up the great work!',
-      date: '2024-03-15',
-      helpful: 12
-    },
-    {
-      id: 2,
-      from: {
-        name: 'Mike Johnson',
-        avatar: 'https://images.unsplash.com/photo-1519244703995-f4e0f30006d5?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80'
-      },
-      to: {
-        name: 'John Doe',
-        avatar: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80'
-      },
-      task: 'API Integration',
-      rating: 4,
-      content: 'Good job implementing the API endpoints. The documentation could be more detailed, but overall the implementation is solid.',
-      date: '2024-03-14',
-      helpful: 8
-    },
-    {
-      id: 3,
-      from: {
-        name: 'Jane Smith',
-        avatar: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80'
-      },
-      to: {
-        name: 'Mike Johnson',
-        avatar: 'https://images.unsplash.com/photo-1519244703995-f4e0f30006d5?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80'
-      },
-      task: 'Database Optimization',
-      rating: 5,
-      content: 'Outstanding work on optimizing the database queries. The performance improvements are significant and well-documented.',
-      date: '2024-03-13',
-      helpful: 15
+  const [feedbacks, setFeedbacks] = useState<Feedback[]>([]);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetchFeedbacks();
+  }, [filter]);
+
+  const fetchFeedbacks = async () => {
+    try {
+      setLoading(true);
+      let endpoint;
+      
+      if (filter === 'received') {
+        // Get feedbacks where the current user is the recipient
+        endpoint = role === 'hr' 
+          ? `/managers/feedback/${userId}`
+          : `/employees/feedback/${userId}`;
+      } else {
+        // For 'all' or 'given', we'll need to adapt since your routes don't directly support this
+        // You might need to add these routes on the backend
+        endpoint = role === 'hr' 
+          ? `/managers/feedback`
+          : `/employees/feedback`;
+      }
+      
+      const response = await axios.get(endpoint);
+      if(Array.isArray(response.data)) {
+        setFeedbacks(response.data);
+      } else {
+        console.error('Unexpected response format:', response.data);
+      }
+    } catch (error) {
+      console.error('Failed to fetch feedbacks:', error);
+    } finally {
+      setLoading(false);
     }
-  ];
-
-  const handleFeedbackSubmit = (data: unknown) => {
-    console.log('Feedback submitted:', data);
-    setShowFeedbackForm(false);
   };
+
+  const handleFeedbackSubmit = async (data: unknown) => {
+    try {
+      const endpoint = role === 'hr' ? '/managers/feedback' : '/employees/feedback';
+      await axios.post(endpoint, data);
+      setShowFeedbackForm(false);
+      fetchFeedbacks();
+    } catch (error) {
+      console.error('Failed to submit feedback:', error);
+    }
+  };
+  
+
+  const filteredFeedbacks = feedbacks
+  //   .filter(feedback => {
+  //   if (!searchQuery) return true;
+    
+  //   const query = searchQuery.toLowerCase();
+  //   return (
+  //     (feedback.from?.name?.toLowerCase().includes(query) || '') ||
+  //     (feedback.to?.name?.toLowerCase().includes(query) || '') ||
+  //     (feedback.taskId?.title?.toLowerCase().includes(query) || '')
+  //   );
+  // });
 
   return (
     <div className="space-y-6">
@@ -84,8 +103,9 @@ export default function Feedback() {
             </button>
           </div>
           <FeedbackForm
-            type="hr"
+            type={role ?? 'hr'}
             onSubmit={handleFeedbackSubmit}
+            userId={userId ?? ''}
           />
         </div>
       ) : (
@@ -108,6 +128,8 @@ export default function Feedback() {
                 type="text"
                 placeholder="Search feedback..."
                 className="input-field pl-10"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
               />
             </div>
             <div className="flex gap-2">
@@ -144,65 +166,183 @@ export default function Feedback() {
             </div>
           </div>
 
-          <div className="space-y-6">
-            {feedbacks.map((feedback) => (
-              <div key={feedback.id} className="card hover:shadow-md transition-shadow">
-                <div className="flex items-center gap-4 mb-4">
-                  <div className="flex items-center gap-2">
-                    <img
-                      src={feedback.from.avatar}
-                      alt={feedback.from.name}
-                      className="w-10 h-10 rounded-full"
-                    />
-                    <span className="text-gray-600">→</span>
-                    <img
-                      src={feedback.to.avatar}
-                      alt={feedback.to.name}
-                      className="w-10 h-10 rounded-full"
-                    />
-                  </div>
-                  <div>
-                    <p className="text-sm text-gray-600">
-                      <span className="font-medium text-gray-900">{feedback.from.name}</span>
-                      {' → '}
-                      <span className="font-medium text-gray-900">{feedback.to.name}</span>
-                    </p>
-                    <p className="text-sm text-gray-500">{feedback.task}</p>
-                  </div>
-                </div>
-
-                <div className="flex items-center gap-2 mb-3">
-                  {[...Array(5)].map((_, i) => (
-                    <Star
-                      key={i}
-                      className={`w-5 h-5 ${
-                        i < feedback.rating
-                          ? 'text-yellow-400 fill-current'
-                          : 'text-gray-300'
-                      }`}
-                    />
-                  ))}
-                </div>
-
-                <p className="text-gray-600 mb-4">{feedback.content}</p>
-
-                <div className="flex items-center justify-between text-sm text-gray-500">
-                  <div className="flex items-center gap-4">
-                    <div className="flex items-center gap-1">
-                      <Calendar className="w-4 h-4" />
-                      {feedback.date}
+          {loading ? (
+            <div className="flex justify-center py-8">
+              <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-[#2E21DE]"></div>
+            </div>
+          ) : filteredFeedbacks.length === 0 ? (
+            <div className="text-center py-12">
+              <p className="text-gray-500">No feedback found</p>
+            </div>
+          ) : (
+            <div className="space-y-6">
+              {filteredFeedbacks.map((feedback) => (
+                <div key={feedback._id} className="card hover:shadow-md transition-shadow">
+                  <div className="flex items-center gap-4 mb-4">
+                    <div className="flex items-center gap-2">
+                      <img
+                        src={feedback.from?.avatar || '/default-avatar.png'}
+                        alt={feedback.from?.name || 'User'}
+                        className="w-10 h-10 rounded-full"
+                      />
+                      <span className="text-gray-600">→</span>
+                      <img
+                        src={feedback.to?.avatar || '/default-avatar.png'}
+                        alt={feedback.to?.name || 'User'}
+                        className="w-10 h-10 rounded-full"
+                      />
                     </div>
-                    <button className="flex items-center gap-1 hover:text-gray-900">
-                      <ThumbsUp className="w-4 h-4" />
-                      {feedback.helpful} found helpful
-                    </button>
+                    <div>
+                      <p className="text-sm text-gray-600">
+                        <span className="font-medium text-gray-900">{feedback.from?.name || 'User'}</span>
+                        {' → '}
+                        <span className="font-medium text-gray-900">{feedback.to?.name || 'User'}</span>
+                      </p>
+                      <p className="text-sm text-gray-500">
+                        Task: {feedback.taskId?.title || 'Unknown Task'}
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center gap-2 mb-3">
+                    {[...Array(5)].map((_, i) => (
+                      <Star
+                        key={i}
+                        className={`w-5 h-5 ${
+                          i < feedback.formData.overallRating
+                            ? 'text-yellow-400 fill-current'
+                            : 'text-gray-300'
+                        }`}
+                      />
+                    ))}
+                  </div>
+
+                  <div className="mb-4">
+                    {Object.entries(feedback.formData.answers).slice(0, 2).map(([questionId, answer]) => {
+                      const question = (role === 'hr' ? hrQuestions : employeeQuestions)
+                        .find(q => q.id === parseInt(questionId));
+                      
+                      return question ? (
+                        <div key={questionId} className="mb-2">
+                          <p className="text-sm text-gray-600 font-medium">{question.text}</p>
+                          <p className="text-gray-700">{answer as string}</p>
+                        </div>
+                      ) : null;
+                    })}
+                    
+                    {Object.keys(feedback.formData.answers).length > 2 && (
+                      <button className="text-sm text-[#2E21DE]">
+                        Show more...
+                      </button>
+                    )}
+                  </div>
+
+                  <div className="flex items-center justify-between text-sm text-gray-500">
+                    <div className="flex items-center gap-4">
+                      <div className="flex items-center gap-1">
+                        <Calendar className="w-4 h-4" />
+                        {new Date(feedback.createdAt).toLocaleDateString()}
+                      </div>
+                    </div>
                   </div>
                 </div>
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
+          )}
         </>
       )}
     </div>
   );
 }
+
+// These are needed for rendering feedback content
+const hrQuestions = [
+  {
+    id: 1,
+    text: "Can you describe an instance where the HR team effectively addressed a concern or request you had?",
+    type: "text"
+  },
+  {
+    id: 2,
+    text: "What was the outcome?",
+    type: "text"
+  },
+  {
+    id: 3,
+    text: "Are there specific areas where you believe HR could improve in providing support to employees?",
+    type: "text"
+  },
+  {
+    id: 4,
+    text: "How clear and accessible are the communications from HR regarding company policies and updates?",
+    type: "text"
+  },
+  {
+    id: 5,
+    text: "What suggestions do you have for HR to enhance clarity and transparency in their communications?",
+    type: "text"
+  },
+  {
+    id: 6,
+    text: "Has HR facilitated or informed you about professional development opportunities that align with your career goals?",
+    type: "text"
+  },
+  {
+    id: 7,
+    text: "What additional resources or support would you like HR to offer for your professional growth?",
+    type: "text"
+  },
+  {
+    id: 8,
+    text: "Do you feel that HR provides adequate tools and platforms for receiving continuous feedback?",
+    type: "text"
+  },
+  {
+    id: 9,
+    text: "What improvements would you suggest for HR to enhance the performance management process?",
+    type: "text"
+  }
+];
+
+const employeeQuestions = [
+  {
+    id: 10,
+    text: "How would you evaluate the employee's overall performance and contributions during the review period?",
+    type: "text"
+  },
+  {
+    id: 11,
+    text: "Can you highlight a project or task where the employee exceeded expectations or delivered outstanding results?",
+    type: "text"
+  },
+  {
+    id: 12,
+    text: "What progress has the employee made in developing their skills or competencies since the last review?",
+    type: "text"
+  },
+  {
+    id: 13,
+    text: "Are there specific areas where the employee shows strong potential for continued growth?",
+    type: "text"
+  },
+  {
+    id: 14,
+    text: "How effectively does the employee adapt to changes or evolving priorities in the workplace?",
+    type: "text"
+  },
+  {
+    id: 15,
+    text: "Can you provide an example of how the employee approached and resolved a challenging problem?",
+    type: "text"
+  },
+  {
+    id: 16,
+    text: "How does the employee contribute to team collaboration and a positive work environment?",
+    type: "text"
+  },
+  {
+    id: 17,
+    text: "Has the employee demonstrated initiative or leadership qualities, even informally? Please provide an example if applicable.",
+    type: "text"
+  }
+];

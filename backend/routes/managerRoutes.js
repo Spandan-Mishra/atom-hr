@@ -85,4 +85,16 @@ router.post('/feedback', async (req, res) => {
     }
 });
 
+router.get('/feedback/:hrid', async (req, res) => {
+    try {
+        const feedbacks = await Feedback.find({ to: req.params.hrid })
+            .populate('from', 'id')
+            .populate('taskId', 'title');
+
+        res.json(feedbacks);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+})
+
 module.exports = router;
