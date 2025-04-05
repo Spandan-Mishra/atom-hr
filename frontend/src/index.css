@@ -1,1 +1,25 @@
 @import "tailwindcss";
+
+@layer base {
+  :root {
+    --primary: #2E21DE;
+  }
+  
+  body {
+    @apply antialiased text-gray-900;
+  }
+}
+
+@layer components {
+  .btn-primary {
+    @apply px-4 py-2 bg-[#2E21DE] text-white rounded-lg hover:bg-[#2E21DE]/90 transition-colors;
+  }
+  
+  .input-field {
+    @apply w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#2E21DE] focus:border-[#2E21DE];
+  }
+  
+  .card {
+    @apply bg-white rounded-xl shadow-sm p-6;
+  }
+}
