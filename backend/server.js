@@ -6,7 +6,6 @@ const dbConnect = require('./config/db');
 
 const managerRoutes = require('./routes/managerRoutes');
 const employeeRoutes = require('./routes/employeeRoutes');
-const feedbackRoutes = require('./routes/feedbackRoutes');
 
 const app = express();
 dbConnect();
@@ -16,7 +15,6 @@ app.use(express.json());
 
 app.use('/managers', managerRoutes);
 app.use('/employees', employeeRoutes);
-app.use('/feedback', feedbackRoutes);
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
