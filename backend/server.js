@@ -13,8 +13,14 @@ dbConnect();
 app.use(cors());
 app.use(express.json());
 
+app.get('/checkup', (req, res) => {
+    res.json({
+        message: "Backend is up"
+    })
+})
+
 app.use('/managers', managerRoutes);
 app.use('/employees', employeeRoutes);
 
-const PORT = process.env.PORT || 5000;
+const PORT = 3000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
