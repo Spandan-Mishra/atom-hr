@@ -10,7 +10,8 @@ import FeedbackForm from '../components/FeedbackForm';
 import axios from 'axios';
 
 export default function Feedback() {
-  const role = localStorage.getItem('role') as 'hr' | 'em' | null;
+  const user = localStorage.getItem('user');
+  const role = user ? (JSON.parse(user).role as 'HR' | 'Employee' | null) : null;
   const userId = localStorage.getItem('userId');
   const [filter, setFilter] = useState('received');
   const [showFeedbackForm, setShowFeedbackForm] = useState(false);
@@ -41,13 +42,13 @@ export default function Feedback() {
       
       if (filter === 'received') {
         // Get feedbacks where the current user is the recipient
-        endpoint = role === 'hr' 
+        endpoint = role === 'HR' 
           ? `/managers/feedback/${userId}`
           : `/employees/feedback/${userId}`;
       } else {
         // For 'all' or 'given', we'll need to adapt since your routes don't directly support this
         // You might need to add these routes on the backend
-        endpoint = role === 'hr' 
+        endpoint = role === 'HR' 
           ? `/managers/feedback`
           : `/employees/feedback`;
       }
@@ -67,7 +68,7 @@ export default function Feedback() {
 
   const handleFeedbackSubmit = async (data: unknown) => {
     try {
-      const endpoint = role === 'hr' ? '/managers/feedback' : '/employees/feedback';
+      const endpoint = role === 'HR' ? '/managers/feedback' : '/employees/feedback';
       await axios.post(endpoint, data);
       setShowFeedbackForm(false);
       fetchFeedbacks();
@@ -103,7 +104,7 @@ export default function Feedback() {
             </button>
           </div>
           <FeedbackForm
-            type={role ?? 'hr'}
+            type={role ?? 'HR'}
             onSubmit={handleFeedbackSubmit}
             userId={userId ?? ''}
           />
@@ -219,7 +220,7 @@ export default function Feedback() {
 
                   <div className="mb-4">
                     {Object.entries(feedback.formData.answers).slice(0, 2).map(([questionId, answer]) => {
-                      const question = (role === 'hr' ? hrQuestions : employeeQuestions)
+                      const question = (role === 'HR' ? hrQuestions : employeeQuestions)
                         .find(q => q.id === parseInt(questionId));
                       
                       return question ? (
