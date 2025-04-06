@@ -4,7 +4,7 @@ import Feedback from './pages/Feedback';
 import Layout from './components/Layout';
 import Tasks from './pages/Tasks';
 import Dashboard from './pages/ManagerDashboard';
-import Development from './pages/Development';
+import Development from './components/Development';
 
 function App() {
 
