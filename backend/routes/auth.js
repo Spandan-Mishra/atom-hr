@@ -41,8 +41,8 @@ router.post('/register', async (req, res) => {
     }
 });
 
-router.get('/user', async (req, res) => {
-    const phone = localStorage.getItem('phone');
+router.get('/user/:phone', async (req, res) => {
+    const phone = req.params.phone;
     const user = await User.findOne({ phone });
     if (!user) {
         return res.status(404).json({ message: 'User not found' });

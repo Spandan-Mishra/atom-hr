@@ -16,14 +16,14 @@ router.get('/tasks/:managerId', async (req, res) => {
 
 router.post('/tasks/create', async (req, res) => {
     try {
-        const { creatorId, title, description } = req.body;
+        const { creatorId, title, description, assignees } = req.body;
 
         const task = new Task({
             creatorId,
             title,
             description,
             completed: false,
-            assignees: []
+            assignees: assignees
         });
 
         await task.save();
