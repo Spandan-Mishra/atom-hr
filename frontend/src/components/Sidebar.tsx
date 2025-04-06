@@ -3,7 +3,7 @@ import {
   LayoutDashboard, 
   CheckSquare, 
   MessageSquare,
-  LogOut
+  LogOut,
 } from 'lucide-react';
 
 const Sidebar = () => {
@@ -55,6 +55,7 @@ const Sidebar = () => {
           <MessageSquare className="w-5 h-5" />
           Feedback
         </NavLink>
+
       </nav>
       
       <div className="absolute bottom-4 w-56">

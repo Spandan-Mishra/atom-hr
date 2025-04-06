@@ -5,7 +5,8 @@ const feedbackSchema = new mongoose.Schema({
     from: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
     to: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
     formData: { type: mongoose.Schema.Types.Mixed, required: true },
-}, { timestamps: true });
+    aiSummary: { type: String },
+}, { timestamps: true }); 
 
 const Feedback = mongoose.model('Feedback', feedbackSchema);
 module.exports = Feedback;
