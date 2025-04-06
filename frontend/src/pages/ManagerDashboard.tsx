@@ -149,15 +149,16 @@ export default function ManagerDashboard() {
 
       <div className="grid grid-cols-12 gap-6">
         {/* Profile Card */}
-        <div className="col-span-4 bg-gradient-to-br from-gray-900 to-gray-800 rounded-3xl p-6 text-white relative overflow-hidden">
-          <div className="absolute top-0 left-0 w-full h-full bg-black/20"></div>
-          <div className="relative z-10">
+        <div className="relative z-10 bg-cover bg-center rounded-2xl overflow-hidden col-span-4 bg-gradient-to-br from-gray-900 to-gray-800 p-6 text-white" style={{ backgroundImage: `url('/sonal.jpg')`, height: '500px' }}>
+          <div className="absolute inset-0 bg-black/50 backdrop-blur-sm"></div> {/* Dark overlay for text readability */}
+
+          <div className="relative z-10 p-6 text-white">
             <div className="mb-4">
-              <span className="px-4 py-2 bg-indigo-600 rounded-full text-sm">
+              <span className="px-4 py-2 bg-indigo-700 rounded-full text-sm">
                 {currentUser.experience}
               </span>
             </div>
-            <h2 className="text-2xl font-semibold mb-2">Sankalpa Panda</h2>
+            <h2 className="text-2xl font-semibold mb-2">S. Priyam</h2>
             <p className="text-gray-300">{currentUser.role}</p>
             <button className="absolute bottom-6 right-6">
               <ArrowUpRight className="w-6 h-6" />
@@ -165,13 +166,14 @@ export default function ManagerDashboard() {
           </div>
         </div>
 
+
         {/* Strategic Thinking Card */}
         <div className="col-span-4 bg-white rounded-3xl p-6">
           <div className="flex justify-between items-start mb-8">
             <h3 className="text-lg font-semibold">Atom's Strategic Thinking</h3>
             <div className="flex gap-1">
               <div className="w-1.5 h-1.5 rounded-full bg-gray-300"></div>
-              <div className="w-1.5 h-1.5 rounded-full bg-indigo-600"></div>
+              <div className="w-1.5 h-1.5 rounded-full bg-indigo-700"></div>
               <div className="w-1.5 h-1.5 rounded-full bg-gray-300"></div>
             </div>
           </div>
@@ -179,7 +181,7 @@ export default function ManagerDashboard() {
             <div className="relative w-48 h-48">
               <div className="absolute inset-0 flex items-center justify-center">
                 <div className="w-40 h-40 rounded-full border-[16px] border-gray-100">
-                  <div className="w-full h-full rounded-full border-[16px] border-indigo-600 border-t-transparent border-r-transparent rotate-[220deg]"></div>
+                  <div className="w-full h-full rounded-full border-[16px] border-indigo-700 border-t-transparent border-r-transparent rotate-[220deg]"></div>
                 </div>
                 <div className="absolute">
                   <div className="w-16 h-16 rounded-full bg-indigo-100 flex items-center justify-center">
@@ -191,10 +193,10 @@ export default function ManagerDashboard() {
             <h4 className="text-lg font-semibold mt-4">Need Improvement</h4>
             <p className="text-gray-600 text-center mt-2">
               You excel at getting tasks done. To grow...
-              <button className="text-indigo-600 ml-1">see more</button>
+              <button className="text-indigo-700 ml-1">see more</button>
             </p>
-            <button className="w-full py-3 bg-gray-50 rounded-xl mt-4 cursor-pointer" onClick={() => navigate('/development')}>
-              Details
+            <button className="w-full py-3 bg-gray-50 hover:bg-gray-200 duration-100 rounded-xl mt-4 cursor-pointer" onClick={() => navigate('/development')}>
+              View Development Plans
             </button>
           </div>
         </div>
@@ -222,7 +224,7 @@ export default function ManagerDashboard() {
                       key={month}
                       onClick={() => handleMonthSelect(index)}
                       className={`p-2 text-sm rounded-lg hover:bg-indigo-50 ${
-                        currentDate.getMonth() === index ? 'bg-indigo-100 text-indigo-600' : ''
+                        currentDate.getMonth() === index ? 'bg-indigo-100 text-indigo-700' : ''
                       }`}
                     >
                       {month}
@@ -259,9 +261,9 @@ export default function ManagerDashboard() {
                   day.isEmpty
                     ? 'text-gray-300 cursor-default'
                     : day.isToday
-                    ? 'bg-indigo-600 text-white'
+                    ? 'bg-indigo-700 text-white'
                     : day.isSelected
-                    ? 'bg-indigo-100 text-indigo-600'
+                    ? 'bg-indigo-100 text-indigo-700'
                     : 'hover:bg-gray-100'
                 }`}
               >
@@ -301,7 +303,7 @@ export default function ManagerDashboard() {
           </div>
           <div className="space-y-6">
             {todos.map(todo => (
-              <div key={todo.id} className="border-l-4 border-indigo-600 pl-4">
+              <div key={todo.id} className="border-l-4 border-indigo-700 pl-4">
                 <h4 className="font-medium mb-1">{todo.title}</h4>
                 <p className="text-sm text-gray-500 mb-2">{todo.date}</p>
                 <div className="flex gap-2">
@@ -311,7 +313,7 @@ export default function ManagerDashboard() {
                   <span className={`px-3 py-1 rounded-full text-sm ${
                     todo.priority === 'high'
                       ? 'bg-indigo-600 text-white'
-                      : 'bg-indigo-100 text-indigo-600'
+                      : 'bg-indigo-100 text-indigo-700'
                   }`}>
                     {todo.priority === 'high' ? 'High priority' : 'Medium'}
                   </span>
