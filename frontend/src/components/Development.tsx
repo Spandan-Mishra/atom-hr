@@ -23,7 +23,7 @@ interface FeedbackData {
 
 export default function Development() {
   const [loading, setLoading] = useState(false);
-  const [feedbackData, setFeedbackData] = useState<FeedbackData[]>([
+  const [feedbackData] = useState<FeedbackData[]>([
     {
       id: '1',
       type: 'hr',
@@ -65,6 +65,7 @@ export default function Development() {
   const [selectedFeedback, setSelectedFeedback] = useState<FeedbackData | null>(null);
   const [aiAnalysis, setAiAnalysis] = useState<string>('');
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const requestAiAnalysis = async (feedback: FeedbackData) => {
     setLoading(true);
     try {

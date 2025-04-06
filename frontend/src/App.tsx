@@ -5,6 +5,7 @@ import Layout from './components/Layout';
 import Tasks from './pages/Tasks';
 import Dashboard from './pages/ManagerDashboard';
 import Development from './components/Development';
+import Ask from './pages/Ask';
 
 function App() {
 
@@ -17,6 +18,7 @@ function App() {
           <Route path="feedback" element={<Feedback />} />
           <Route path='dashboard' element={<Dashboard />} />
           <Route path="development" element={<Development />} />
+          <Route path="ask" element={<Ask />} />
         </Route>
       </Routes>
     </BrowserRouter>
