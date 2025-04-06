@@ -3,7 +3,8 @@ import {
   LayoutDashboard, 
   CheckSquare, 
   MessageSquare,
-  LogOut
+  LogOut,
+  Brain
 } from 'lucide-react';
 
 const Sidebar = () => {
@@ -54,6 +55,20 @@ const Sidebar = () => {
         >
           <MessageSquare className="w-5 h-5" />
           Feedback
+        </NavLink>
+
+        <NavLink
+          to="/development"
+          className={({ isActive }) =>
+            `flex items-center gap-2 p-2 rounded-lg transition-colors ${
+              isActive 
+                ? 'bg-[#2E21DE] text-white' 
+                : 'text-gray-600 hover:bg-gray-100'
+            }`
+          }
+        >
+          <Brain className="w-5 h-5" />
+          Development
         </NavLink>
       </nav>
       

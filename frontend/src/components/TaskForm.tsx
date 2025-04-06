@@ -30,7 +30,6 @@ export default function TaskForm({ onClose, onSubmit }: TaskFormProps) {
   const [deadline, setDeadline] = useState('');
   const [assignees, setAssignees] = useState<string[]>([]);
 
-  // Mock employee list - replace with actual data
   const employees = [
     { id: '1', name: 'John Doe', avatar: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e' },
     { id: '2', name: 'Jane Smith', avatar: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330' },
@@ -55,7 +54,7 @@ export default function TaskForm({ onClose, onSubmit }: TaskFormProps) {
       ),
       status: 'pending',
       progress: 0,
-      createdBy: '1' // Mock user ID
+      createdBy: '1'
     };
 
     onSubmit(task);

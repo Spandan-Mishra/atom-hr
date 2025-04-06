@@ -3,16 +3,20 @@ const router = express.Router();
 const Task = require('../models/Task');
 const Feedback = require('../models/Feedback');
 const User = require('../models/User');
+const { processFeedback } = require('../services/feedbackService');
 
+// Get all tasks assigned to an employee
 router.get('/tasks/:employeeId', async (req, res) => {
     try {
-        const tasks = await Task.find({ assignees: req.params.employeeId }).populate('creatorId', 'name email');
+        const tasks = await Task.find({ assignees: req.params.employeeId })
+            .populate('creatorId', 'name email');
         res.json(tasks);
     } catch (error) {
         res.status(500).json({ message: error.message });
     }
 });
 
+// Get detailed task info
 router.get('/task-details/:taskId', async (req, res) => {
     try {
         const task = await Task.findById(req.params.taskId)
@@ -27,28 +31,27 @@ router.get('/task-details/:taskId', async (req, res) => {
     }
 });
 
+// Submit feedback (from employee or HR)
 router.post('/feedback', async (req, res) => {
     try {
-        const { taskId, from, to, formData } = req.body;
+        const { taskId, from, to, formData, feedbackType } = req.body;
 
-        const feedback = new Feedback({
-            taskId,
-            from,
-            to,
-            formData
+        const feedback = await processFeedback({ taskId, from, to, formData, feedbackType });
+
+        res.status(201).json({
+            message: 'Feedback submitted successfully with AI summary',
+            feedback,
         });
-
-        await feedback.save();
-        res.status(201).json({ message: 'Feedback submitted successfully', feedback });
     } catch (error) {
         res.status(500).json({ message: error.message });
     }
 });
 
-router.get('/feedbacks/:employeeId', async (req, res) => {
+// Get all feedbacks received by an employee
+router.get('/feedbacks/received/:employeeId', async (req, res) => {
     try {
         const feedbacks = await Feedback.find({ to: req.params.employeeId })
-            .populate('from', 'id')
+            .populate('from', 'name email')
             .populate('taskId', 'title');
 
         res.json(feedbacks);
@@ -57,14 +60,13 @@ router.get('/feedbacks/:employeeId', async (req, res) => {
     }
 });
 
+// Optional routes for future use
 router.get('/goals/:employeeId', async (req, res) => {
-    
-    res.json({ message: 'Goals' });
+    res.json({ message: 'Goals (to be implemented)' });
 });
 
 router.get('/development-plan/:employeeId', async (req, res) => {
-    
-    res.json({ message: 'Development Plan' });
+    res.json({ message: 'Development Plan (to be implemented)' });
 });
 
 module.exports = router;
